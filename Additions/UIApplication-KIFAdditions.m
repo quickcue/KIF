@@ -76,4 +76,16 @@ MAKE_CATEGORIES_LOADABLE(UIApplication_KIFAdditions)
     return nil;
 }
 
+- (UIWindow *)alertViewWindow;
+{
+    for (UIWindow *window in [self windows]) {
+        NSArray *alertViews = [window subviewsWithClassNameOrSuperClassNamePrefix:@"UIAlertView"];
+        if (alertViews.count > 0) {
+            return window;
+        }
+    }
+    
+    return nil;
+}
+
 @end

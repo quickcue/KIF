@@ -581,6 +581,36 @@ typedef CGPoint KIFDisplacement;
     }];
 }
 
++ (id)stepToDismissAlertViewWithButtonTitle:(NSString *)title
+{
+    return [self stepWithDescription:[NSString stringWithFormat:@"Dismiss the alert with button titled: %@", title]
+                      executionBlock:^(KIFTestStep *step, NSError **error) {
+                                                    
+                          const NSTimeInterval tapDelay = 0.05f;
+                          NSArray *windows = [[UIApplication sharedApplication] windows];
+                          KIFTestCondition(windows.count, error, @"Failed to find any windows in the application");
+                          
+                          UIWindow *alertViewWindow = [[UIApplication sharedApplication] alertViewWindow];
+                          
+                          BOOL found;
+                          if (alertViewWindow) {
+                              NSArray *alertViews = [alertViewWindow subviewsWithClassNameOrSuperClassNamePrefix:@"UIAlertView"];
+                              if(alertViews.count > 0) {
+                                  found = YES;
+                                  UIAlertView *alertView = alertViews[0];
+                                  [alertView dismissWithClickedButtonIndex:[alertView cancelButtonIndex] animated:YES];
+                              }
+                          }
+                          
+                          if(!found) {
+                              KIFTestCondition(@"", error, @"Failed to find alert view to dismiss");
+                          }
+                          
+                          CFRunLoopRunInMode(kCFRunLoopDefaultMode, tapDelay, false);
+                          return KIFTestStepResultSuccess;
+                      }];
+}
+
 + (id)stepToDismissPopover;
 {
     return [self stepWithDescription:@"Dismiss the popover" executionBlock:^(KIFTestStep *step, NSError **error) {
@@ -987,6 +1017,39 @@ typedef CGPoint KIFDisplacement;
     }
     
     return element;
+}
+
++ (id)stepToClearTextFromViewWithAccessibilityLabel:(NSString *)label traits:(UIAccessibilityTraits)traits expectedResult:(NSString *)expectedResult
+{
+    const NSTimeInterval delay = 0.05f;
+    
+    NSString *description = [NSString stringWithFormat:@"Clear the text in the view with accessibility label \"%@\"", label];
+    
+    return [self stepWithDescription:description executionBlock:^(KIFTestStep *step, NSError **error) {
+        
+        UIAccessibilityElement *element = [self _accessibilityElementWithLabel:label accessibilityValue:nil tappable:YES traits:traits error:error];
+        if (!element) {
+            return KIFTestStepResultWait;
+        }
+        
+        UIView *view = [UIAccessibilityElement viewContainingAccessibilityElement:element];
+        
+        KIFTestWaitCondition(view, error, @"Cannot find view with accessibility label \"%@\"", label);
+        
+        KIFTestWaitCondition([view isKindOfClass:[UITextField class]], error, @"View is not a text field, \"%@\"", label);
+        
+        UITextField *textField = (UITextField *)view;
+        textField.text = @"";
+        
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, delay, false);
+        
+        return KIFTestStepResultSuccess;
+    }];
+}
+
++ (id)stepToClearTextFromViewWithAccessibilityLabel:(NSString *)label
+{
+    return [self stepToClearTextFromViewWithAccessibilityLabel:label traits:nil expectedResult:nil];
 }
 
 #define MAJOR_SWIPE_DISPLACEMENT 200
