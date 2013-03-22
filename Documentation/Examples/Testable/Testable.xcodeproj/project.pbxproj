@@ -35,7 +35,6 @@
 		EB7204A01680E2EE00278DA2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAB073AE139861C0008AF393 /* Foundation.framework */; };
 		EB7204A61680E2EE00278DA2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB7204A41680E2EE00278DA2 /* InfoPlist.strings */; };
 		EB7204A91680E2EE00278DA2 /* IntegrationTestCases.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7204A81680E2EE00278DA2 /* IntegrationTestCases.m */; };
-		EB7204B21680E38700278DA2 /* libKIFTestCase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB7204941680E10800278DA2 /* libKIFTestCase.a */; };
 		EB7204B31680E49B00278DA2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAB073B0139861C0008AF393 /* CoreGraphics.framework */; };
 		EB7204B61680E4F800278DA2 /* KIFTester+EXAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7204B51680E4F800278DA2 /* KIFTester+EXAddition.m */; };
 /* End PBXBuildFile section */
@@ -52,15 +51,8 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = A868094113E32C77005DDA1F /* KIF.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = AAB07267139719AC008AF393;
+			remoteGlobalIDString = EB72043E1680DDAD00278DA2;
 			remoteInfo = KIF;
-		};
-		EB7204931680E10800278DA2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A868094113E32C77005DDA1F /* KIF.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EB72047C1680DDAD00278DA2;
-			remoteInfo = KIFTestCase;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -125,7 +117,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB7204B31680E49B00278DA2 /* CoreGraphics.framework in Frameworks */,
-				EB7204B21680E38700278DA2 /* libKIFTestCase.a in Frameworks */,
 				EB72049E1680E2EE00278DA2 /* SenTestingKit.framework in Frameworks */,
 				EB72049F1680E2EE00278DA2 /* UIKit.framework in Frameworks */,
 				EB7204A01680E2EE00278DA2 /* Foundation.framework in Frameworks */,
@@ -139,7 +130,6 @@
 			isa = PBXGroup;
 			children = (
 				A868094613E32C77005DDA1F /* libKIF.a */,
-				EB7204941680E10800278DA2 /* libKIFTestCase.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -331,13 +321,6 @@
 			fileType = archive.ar;
 			path = libKIF.a;
 			remoteRef = A868094513E32C77005DDA1F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		EB7204941680E10800278DA2 /* libKIFTestCase.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libKIFTestCase.a;
-			remoteRef = EB7204931680E10800278DA2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -688,6 +671,7 @@
 				EB7204AD1680E2EE00278DA2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
