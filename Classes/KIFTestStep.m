@@ -349,7 +349,7 @@ typedef CGPoint KIFDisplacement;
 
         if (![self _isUserInteractionEnabledForView:view]) {
             if (error) {
-                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"View with accessibility label \"%@\" is not enabled for interaction", label], NSLocalizedDescriptionKey, nil]] autorelease];
+                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"View with accessibility label \"%@\" is not enabled for interaction", label]}] autorelease];
             }
             return KIFTestStepResultWait;
         }
@@ -446,7 +446,7 @@ typedef CGPoint KIFDisplacement;
         
         if (![self _isUserInteractionEnabledForView:view]) {
             if (error) {
-                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"View with accessibility label \"%@\" is not enabled for interaction", label], NSLocalizedDescriptionKey, nil]] autorelease];
+                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"View with accessibility label \"%@\" is not enabled for interaction", label]}] autorelease];
             }
             return KIFTestStepResultWait;
         }
@@ -561,7 +561,7 @@ typedef CGPoint KIFDisplacement;
                     // This delegate inserts views directly, so try to figure out what the title is by looking for a label
                     UIView *rowView = [pickerView.delegate pickerView:pickerView viewForRow:rowIndex forComponent:componentIndex reusingView:nil];
                     NSArray *labels = [rowView subviewsWithClassNameOrSuperClassNamePrefix:@"UILabel"];
-                    UILabel *label = (labels.count > 0 ? [labels objectAtIndex:0] : nil);
+                    UILabel *label = (labels.count > 0 ? labels[0] : nil);
                     rowTitle = label.text;
                 }
                 
@@ -635,7 +635,7 @@ typedef CGPoint KIFDisplacement;
 {
     return [self stepWithDescription:[NSString stringWithFormat:@"Dismiss the alert with button titled: %@", title]
                       executionBlock:^(KIFTestStep *step, NSError **error) {
-                                                    
+                          
                           const NSTimeInterval tapDelay = 0.05f;
                           NSArray *windows = [[UIApplication sharedApplication] windows];
                           KIFTestCondition(windows.count, error, @"Failed to find any windows in the application");
@@ -667,7 +667,7 @@ typedef CGPoint KIFDisplacement;
         const NSTimeInterval tapDelay = 0.05;
         NSArray *windows = [[UIApplication sharedApplication] windows];
         KIFTestCondition(windows.count, error, @"Failed to find any windows in the application");
-        UIView *dimmingView = [[[windows objectAtIndex:0] subviewsWithClassNamePrefix:@"UIDimmingView"] lastObject];
+        UIView *dimmingView = [[windows[0] subviewsWithClassNamePrefix:@"UIDimmingView"] lastObject];
         [dimmingView tapAtPoint:CGPointMake(50.0f, 50.0f)];
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, tapDelay, false);
         return KIFTestStepResultSuccess;
@@ -848,7 +848,7 @@ typedef CGPoint KIFDisplacement;
         
         if (![self _isUserInteractionEnabledForView:view]) {
             if (error) {
-                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Album picker is not enabled for interaction"], NSLocalizedDescriptionKey, nil]] autorelease];
+                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Album picker is not enabled for interaction"]}] autorelease];
             }
             return KIFTestStepResultWait;
         }
@@ -997,14 +997,14 @@ typedef CGPoint KIFDisplacement;
         if (error) {
             // For purposes of a better error message, see if we can find the view, just not a view with the specified value.
             if (value && [[UIApplication sharedApplication] accessibilityElementWithLabel:label accessibilityValue:nil traits:traits]) {
-                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Found an accessibility element with the label \"%@\", but not with the value \"%@\"", label, value], NSLocalizedDescriptionKey, nil]] autorelease];
+                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Found an accessibility element with the label \"%@\", but not with the value \"%@\"", label, value]}] autorelease];
                 
             // Check the traits, too.
             } else if (traits != UIAccessibilityTraitNone && [[UIApplication sharedApplication] accessibilityElementWithLabel:label accessibilityValue:nil traits:UIAccessibilityTraitNone]) {
-                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Found an accessibility element with the label \"%@\", but not with the traits \"%llu\"", label, traits], NSLocalizedDescriptionKey, nil]] autorelease];
+                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Found an accessibility element with the label \"%@\", but not with the traits \"%llu\"", label, traits]}] autorelease];
                 
             } else {
-                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to find accessibility element with the label \"%@\"", label], NSLocalizedDescriptionKey, nil]] autorelease];
+                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to find accessibility element with the label \"%@\"", label]}] autorelease];
             }
         }
         return nil;
@@ -1014,7 +1014,7 @@ typedef CGPoint KIFDisplacement;
     UIView *view = [UIAccessibilityElement viewContainingAccessibilityElement:element];
     if (!view) {
         if (error) {
-            *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat: @"Cannot find view containing accessibility element with the label \"%@\"", label], NSLocalizedDescriptionKey, nil]] autorelease];
+            *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat: @"Cannot find view containing accessibility element with the label \"%@\"", label]}] autorelease];
         }
         return nil;
     }
@@ -1038,7 +1038,7 @@ typedef CGPoint KIFDisplacement;
     
     if ([[UIApplication sharedApplication] isIgnoringInteractionEvents]) {
         if (error) {
-            *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Application is ignoring interaction events", NSLocalizedDescriptionKey, nil]] autorelease];
+            *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: @"Application is ignoring interaction events"}] autorelease];
         }
         return nil;
     }
@@ -1052,7 +1052,7 @@ typedef CGPoint KIFDisplacement;
         // Make sure the view is tappable
         if (![view isTappable]) {
             if (error) {
-                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Accessibility element with label \"%@\" is not tappable. It may be blocked by other views.", label], NSLocalizedDescriptionKey, nil]] autorelease];
+                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Accessibility element with label \"%@\" is not tappable. It may be blocked by other views.", label]}] autorelease];
             }
             return nil;
         }
@@ -1060,7 +1060,7 @@ typedef CGPoint KIFDisplacement;
         // If we don't require tappability, at least make sure it's not hidden
         if ([view isHidden]) {
             if (error) {
-                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Accessibility element with label \"%@\" is hidden.", label], NSLocalizedDescriptionKey, nil]] autorelease];
+                *error = [[[NSError alloc] initWithDomain:@"KIFTest" code:KIFTestStepResultFailure userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Accessibility element with label \"%@\" is hidden.", label]}] autorelease];
             }
             return nil;
         }

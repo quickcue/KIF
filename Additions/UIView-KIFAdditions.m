@@ -174,7 +174,7 @@ typedef struct __GSEvent * GSEventRef;
         return nil;
     }
     
-    return [subviews objectAtIndex:0];
+    return subviews[0];
 }
 
 - (NSArray *)subviewsWithClassNamePrefix:(NSString *)prefix;
@@ -205,7 +205,7 @@ typedef struct __GSEvent * GSEventRef;
         return nil;
     }
     
-    return [subviews objectAtIndex:0];
+    return subviews[0];
 }
 
 - (NSArray *)subviewsWithClassNameOrSuperClassNamePrefix:(NSString *)prefix;
