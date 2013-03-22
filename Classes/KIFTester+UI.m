@@ -115,15 +115,7 @@
 - (void)clearTextFromViewWithAccessibilityLabel:(NSString *)label traits:(UIAccessibilityTraits)traits
 {
     [self waitForViewWithAccessibilityLabel:label traits:traits];
-    
-    UIAccessibilityElement *element = [[UIApplication sharedApplication] accessibilityElementWithLabel:label accessibilityValue:nil traits:traits];
-
-    NSMutableString *text = [NSMutableString string];
-    for (NSInteger i = 0; i < element.accessibilityValue.length; i ++) {
-        [text appendString:@"\b"];
-    }
-
-    [self enterText:text intoViewWithAccessibilityLabel:label traits:UIAccessibilityTraitNone expectedResult:@""];
+    [self run:[KIFTestStep stepToClearTextFromViewWithAccessibilityLabel:label traits:traits expectedResult:@""]];
 }
 
 - (void)clearTextFromAndThenEnterText:(NSString *)text intoViewWithAccessibilityLabel:(NSString *)label
@@ -146,6 +138,11 @@
 - (void)setOn:(BOOL)switchIsOn forSwitchWithAccessibilityLabel:(NSString *)label
 {
     [self run:[KIFTestStep stepToSetOn:switchIsOn forSwitchWithAccessibilityLabel:label]];
+}
+
+- (void)dismissAlertViewWithButtonTitle:(NSString *)title
+{
+    [self run:[KIFTestStep stepToDismissAlertViewWithButtonTitle:title]];
 }
 
 - (void)dismissPopover

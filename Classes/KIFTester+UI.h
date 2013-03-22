@@ -47,6 +47,7 @@
 
 - (void)selectPickerViewRowWithTitle:(NSString *)title;
 - (void)setOn:(BOOL)switchIsOn forSwitchWithAccessibilityLabel:(NSString *)label;
+- (void)dismissAlertViewWithButtonTitle:(NSString *)title;
 - (void)dismissPopover;
 
 - (void)choosePhotoInAlbum:(NSString *)albumName atRow:(NSInteger)row column:(NSInteger)column;
