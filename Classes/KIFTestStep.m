@@ -316,6 +316,26 @@ typedef CGPoint KIFDisplacement;
     return [self stepToTapViewWithAccessibilityLabel:label value:nil traits:traits];
 }
 
++ (id)stepForViewWithAccessibilityLabel:(NSString *)label description:(NSString *)description executionBlock:(KIFTestStepExecutionBlockWithView)executionBlock
+{
+    // viewFinderBlock will first try to find the view with the given |accessibilityLabel| then will
+    // invoke the |executionBlock|.
+    id viewFinderBlock = ^(KIFTestStep *step, NSError **error) {
+            UIApplication *app = [UIApplication sharedApplication];
+            UIAccessibilityElement *element = [app accessibilityElementWithLabel:label accessibilityValue:nil traits:UIAccessibilityTraitNone];
+            KIFTestWaitCondition(element, error, @"Wait for view with accessibility label \"%@\"", label);
+            UIView *view = [UIAccessibilityElement viewContainingAccessibilityElement:element];
+            if (!view) {
+                    return KIFTestStepResultFailure;
+                }
+            // Execute the block.
+            return executionBlock(step, view, error);
+        };
+    
+    return [KIFTestStep stepWithDescription:description executionBlock:viewFinderBlock];
+}
+
+
 + (id)stepToTapViewWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits;
 {
     NSString *description = nil;
