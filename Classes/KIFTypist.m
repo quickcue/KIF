@@ -159,8 +159,8 @@
     }
     
     UIView *view = [UIAccessibilityElement viewContainingAccessibilityElement:element];
-    CGRect keyFrame = [view.window convertRect:[element accessibilityFrame] toView:view];
-    [view tapAtPoint:CGPointCenteredInRect(keyFrame)];
+//    CGRect keyFrame = [view.window convertRect:[element accessibilityFrame] toView:view];
+    [view tapAtPoint:CGPointCenteredInRect(view.bounds)];
     CFRunLoopRunInMode(kCFRunLoopDefaultMode, keystrokeDelay, false);
     
     return YES;
