@@ -688,7 +688,7 @@ typedef CGPoint KIFDisplacement;
         NSArray *windows = [[UIApplication sharedApplication] windows];
         KIFTestCondition(windows.count, error, @"Failed to find any windows in the application");
         UIView *dimmingView = [[windows[0] subviewsWithClassNamePrefix:@"UIDimmingView"] lastObject];
-        [dimmingView tapAtPoint:CGPointMake(50.0f, 50.0f)];
+        [dimmingView tapAtPoint:CGPointMake(1.0f, 1.0f)];
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, tapDelay, false);
         return KIFTestStepResultSuccess;
     }];
