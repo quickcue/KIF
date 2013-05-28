@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'KIF'
-  s.version  = '0.0.1.2'
+  s.version  = '0.0.1.3'
   s.license  = 'Apache'
   s.summary  = 'Keep It Functional - iOS Test Framework.'
   s.homepage = 'https://github.com/square/KIF'
