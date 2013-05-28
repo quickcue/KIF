@@ -20,10 +20,10 @@
         NSLog(@"KIFTester loaded");
         [KIFTester _enableAccessibility];
         
-        if ([[NSProcessInfo processInfo] environment][@"StartKIFManually"]) {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:SenTestToolKey];
-            SenSelfTestMain();
-        }
+        //if ([[NSProcessInfo processInfo] environment][@"StartKIFManually"]) {
+        //    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:SenTestToolKey];
+        //    SenSelfTestMain();
+        //}
     }
 }
 
