@@ -15,4 +15,4 @@
  *
  * @param UNIQUE_NAME A globally unique name.
  */
-#define MAKE_CATEGORIES_LOADABLE(UNIQUE_NAME) 
+#define MAKE_CATEGORIES_LOADABLE(UNIQUE_NAME) @interface FORCELOAD_##UNIQUE_NAME : NSObject @end @implementation FORCELOAD_##UNIQUE_NAME @end

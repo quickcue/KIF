@@ -8,7 +8,9 @@
 //  which Square, Inc. licenses this file to you.
 
 #import "KIFTestCase.h"
-#import "KIFTester.h"
+#import <UIKit/UIKit.h>
+#import "UIApplication-KIFAdditions.h"
+#import "KIFTestActor.h"
 
 #define SIG(class, selector) [class instanceMethodSignatureForSelector:selector]
 
@@ -77,11 +79,28 @@
     return selector != @selector(beforeAll) && selector != @selector(afterAll);
 }
 
-- (KIFTester *)testerInFile:(NSString *)file atLine:(NSInteger)line;
+- (void)failWithException:(NSException *)exception stopTest:(BOOL)stop
 {
-    KIFTester *myTester = [[[KIFTester alloc] initWithFile:file line:line] autorelease];
-    myTester.delegate = self;
-    return myTester;
+    if (stop) {
+        [self writeScreenshotForException:exception];
+    }
+    
+    if (stop && self.stopTestsOnFirstBigFailure) {
+        NSLog(@"Fatal failure encountered: %@", exception.description);
+        NSLog(@"Stopping tests since stopTestsOnFirstBigFailure = YES");
+        
+        KIFTestActor *waiter = [[[KIFTestActor alloc] init] autorelease];
+        [waiter waitForTimeInterval:[[NSDate distantFuture] timeIntervalSinceNow]];
+        
+        return;
+    } else {
+        [super failWithException:exception stopTest:stop];
+    }
+}
+
+- (void)writeScreenshotForException:(NSException *)exception;
+{
+    [[UIApplication sharedApplication] writeScreenshotForLine:exception.lineNumber.unsignedIntegerValue inFile:exception.filename description:nil error:NULL];
 }
 
 @end

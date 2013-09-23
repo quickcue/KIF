@@ -1,17 +1,14 @@
 Pod::Spec.new do |s|
-  s.name     = 'KIF'
-  s.version  = '0.0.1.3'
-  s.license  = 'Apache'
-  s.summary  = 'Keep It Functional - iOS Test Framework.'
-  s.homepage = 'https://github.com/square/KIF'
-  s.author   = { 'Square' => 'https://squareup.com/' }
-  s.source   = { :git => 'https://github.com/quickcue/KIF.git', :tag => '0.0.1.2' }
-
-  s.description = 'KIF, which stands for Keep It Functional, is an iOS integration test framework. It allows for easy automation of iOS apps by leveraging the accessibility attributes that the OS makes available for those with visual disabilities.'
-  s.platform = :ios
-
+  s.name         = "KIF"
+  s.version      = "2.0.0"
+  s.summary      = "Keep It Functional - iOS UI acceptance testing in an OCUnit harness."
+  s.homepage     = "https://github.com/kif-framework/KIF/"
+  s.license      = 'Apache 2.0'
+  s.authors      = 'Eric Firestone', 'Jim Puls', 'Brian Nickel'
+  s.source       = { :git => "https://github.com/kif-framework/KIF.git", :tag => "v2.0.0" }
+  s.platform     = :ios, '4.3'
   s.source_files = 'Classes', 'Additions'
-  s.frameworks   = 'CoreGraphics', 'SenTestingKit'
-  s.xcconfig     = {  'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) RUN_KIF_TESTS=1' }
+  s.public_header_files = 'Classes/**/*.h', 'Additions/**/*-KIFAdditions.h'
+  s.frameworks  = 'SenTestingKit', 'CoreGraphics'
   s.prefix_header_contents = '#import <CoreGraphics/CoreGraphics.h>'
 end

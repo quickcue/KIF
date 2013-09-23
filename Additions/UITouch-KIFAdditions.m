@@ -42,9 +42,7 @@ MAKE_CATEGORIES_LOADABLE(UITouch_KIFAdditions)
     } _touchFlags;
 #endif
 }
-
 - (void)setGestureView:(UIView *)view;
-
 @end
 
 @implementation UITouch (KIFAdditions)
