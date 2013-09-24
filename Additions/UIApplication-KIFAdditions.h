@@ -48,7 +48,6 @@ UIKIT_EXTERN NSString *const UIApplicationOpenedURLKey;
  @returns The topmost window containing a @c UIPickerView.
  */
 - (UIWindow *)pickerViewWindow;
-- (UIWindow *)alertViewWindow;
 
 /*!
  @returns The topmost window containing a @c UIDimmingView.
