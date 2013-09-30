@@ -273,7 +273,7 @@
             
             if ([fallbackView isKindOfClass:[UITextField class]] || [fallbackView isKindOfClass:[UITextView class]]) {
                 NSLog(@"KIF: Unable to find keyboard key for %@. Inserting manually.", characterString);
-                [(UITextField *)fallbackView setText:[[(UITextField *)fallbackView text] stringByAppendingString:characterString]];
+                //[(UITextField *)fallbackView setText:[[(UITextField *)fallbackView text] stringByAppendingString:characterString]];
             } else {
                 [self failWithError:[NSError KIFErrorWithFormat:@"Failed to find key for character \"%@\"", characterString] stopTest:YES];
             }
