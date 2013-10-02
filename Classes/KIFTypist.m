@@ -11,8 +11,9 @@
 #import "UIView-KIFAdditions.h"
 #import "CGGeometry-KIFAdditions.h"
 #import "UIAccessibilityElement-KIFAdditions.h"
+#import "KIFUITestActor.h"
 
-const NSTimeInterval KEYSTROKE_DELAY = 0.05f;
+const NSTimeInterval KEYSTROKE_DELAY = 0.1f;
 
 @interface KIFTypist()
 + (NSString *)_representedKeyboardStringForCharacter:(NSString *)characterString;
@@ -82,6 +83,8 @@ const NSTimeInterval KEYSTROKE_DELAY = 0.05f;
     if (!characterString.length) {
         return YES;
     }
+    
+    NSLog(@"%@", characterString);
     
     UIView *keyboardView = [self keyboardView];
     
@@ -186,9 +189,11 @@ const NSTimeInterval KEYSTROKE_DELAY = 0.05f;
         return NO;
     }
     
-    UIView *view = [UIAccessibilityElement viewContainingAccessibilityElement:element];
-    CGRect keyFrame = [view.window convertRect:[element accessibilityFrame] toView:view];
-    [view tapAtPoint:CGPointCenteredInRect(keyFrame)];
+    // The macro was unusable due to KIFTypist being a non-conforming delegate
+    KIFUITestActor *actor = [KIFUITestActor actorInFile:[NSString stringWithUTF8String:__FILE__] atLine:__LINE__ delegate:nil];
+    
+    [actor tapViewWithAccessibilityLabel:characterString];
+    
     CFRunLoopRunInMode(kCFRunLoopDefaultMode, KEYSTROKE_DELAY, false);
     
     return YES;
