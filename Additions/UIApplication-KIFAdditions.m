@@ -11,6 +11,7 @@
 #import "LoadableCategory.h"
 #import "UIView-KIFAdditions.h"
 #import "NSError-KIFAdditions.h"
+#import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 #import <objc/message.h>
 
@@ -114,7 +115,7 @@ static const void *KIFRunLoopModesKey = &KIFRunLoopModesKey;
     NSString *outputPath = [[[NSProcessInfo processInfo] environment] objectForKey:@"KIF_SCREENSHOTS"];
     if (!outputPath) {
         if (error) {
-            *error = [NSError KIFErrorWithFormat:@"Screenshot path not defined.  Please set KIF_SCREENSHOT environment variable."];
+            *error = [NSError KIFErrorWithFormat:@"Screenshot path not defined. Please set KIF_SCREENSHOTS environment variable."];
         }
         return NO;
     }

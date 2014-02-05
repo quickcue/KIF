@@ -134,7 +134,7 @@ static inline KIFDisplacement KIFDisplacementForSwipingInDirection(KIFSwipeDirec
 
 /*
  @abstract Waits for an accessibility element and its containing view based on a variety of criteria.
- @discussion This method provides a more verbose API for achieving what is available in the waitForView/waitForTappableView family of methods, exposing both the found element and its containing view.
+ @discussion This method provides a more verbose API for achieving what is available in the waitForView/waitForTappableView family of methods, exposing both the found element and its containing view.  The results can be used in other methods such as @c tapAccessibilityElement:inView:
  @param element To be populated with the matching accessibility element when found.  Can be NULL.
  @param view To be populated with the matching view when found.  Can be NULL.
  @param label The accessibility label of the element to wait for.
@@ -143,6 +143,28 @@ static inline KIFDisplacement KIFDisplacementForSwipingInDirection(KIFSwipeDirec
  @param mustBeTappable If YES, only an element that can be tapped on will be returned.
  */
 - (void)waitForAccessibilityElement:(UIAccessibilityElement **)element view:(out UIView **)view withLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits tappable:(BOOL)mustBeTappable;
+
+/*
+ @abstract Waits for an accessibility element and its containing view based the accessibility identifier.
+ @discussion This method provides a more verbose API for achieving what is available in the waitForView/waitForTappableView family of methods, exposing both the found element and its containing view.  The results can be used in other methods such as @c tapAccessibilityElement:inView:
+ @param element To be populated with the matching accessibility element when found.  Can be NULL.
+ @param view To be populated with the matching view when found.  Can be NULL.
+ @param identifier The accessibility identifier of the element to wait for.
+ @param mustBeTappable If YES, only an element that can be tapped on will be returned.
+ */
+- (void)waitForAccessibilityElement:(UIAccessibilityElement **)element view:(out UIView **)view withIdentifier:(NSString *)identifier tappable:(BOOL)mustBeTappable;
+
+/*
+ @abstract Waits for an accessibility element and its containing view based on a predicate.
+ @discussion This method provides a more verbose API for achieving what is available in the waitForView/waitForTappableView family of methods, exposing both the found element and its containing view.  The results can be used in other methods such as @c tapAccessibilityElement:inView:
+ 
+ This method provides more flexability than @c waitForAccessibilityElement:view:withLabel:value:traits:tappable: but less precise error messages.  This message will tell you why the method failed but not whether or not the element met some of the criteria.
+ @param element To be populated with the matching accessibility element when found.  Can be NULL.
+ @param view To be populated with the matching view when found.  Can be NULL.
+ @param predicate The predicate to match.
+ @param mustBeTappable If YES, only an element that can be tapped on will be returned.
+ */
+- (void)waitForAccessibilityElement:(UIAccessibilityElement **)element view:(out UIView **)view withElementMatchingPredicate:(NSPredicate *)predicate tappable:(BOOL)mustBeTappable;
 
 /*!
  @abstract Taps a particular view in the view hierarchy.
@@ -295,7 +317,7 @@ static inline KIFDisplacement KIFDisplacementForSwipingInDirection(KIFSwipeDirec
  @param tableViewLabel Accessibility label of the table view.
  @param indexPath Index path of the row to tap.
  */
-- (void)tapRowInTableViewWithAccessibilityLabel:(NSString*)tableViewLabel atIndexPath:(NSIndexPath *)indexPath DEPRECATED_MSG_ATTRIBUTE("Use tapRowAtIndexPath:inTableViewWithAccessibilityIdentifier:");
+- (void)tapRowInTableViewWithAccessibilityLabel:(NSString*)tableViewLabel atIndexPath:(NSIndexPath *)indexPath KIF_DEPRECATED("Use tapRowAtIndexPath:inTableViewWithAccessibilityIdentifier:");
 
 /*!
  @abstract Taps the row at IndexPath in a view with the given identifier.
@@ -322,7 +344,7 @@ static inline KIFDisplacement KIFDisplacementForSwipingInDirection(KIFSwipeDirec
  @param horizontalFraction The horizontal displacement of the scroll action, as a fraction of the width of the view.
  @param verticalFraction The vertical displacement of the scroll action, as a fraction of the height of the view.
  */
-- (void)scrollViewWithAccessibilityLabel:(NSString *)label byFractionOfSizeHorizontal:(CGFloat)horizontalFraction vertical:(CGFloat)verticalFraction DEPRECATED_MSG_ATTRIBUTE("Use scrollViewWithAccessibilityIdentifier:byFractionOfSizeHorizontal:vertical:");
+- (void)scrollViewWithAccessibilityLabel:(NSString *)label byFractionOfSizeHorizontal:(CGFloat)horizontalFraction vertical:(CGFloat)verticalFraction KIF_DEPRECATED("Use scrollViewWithAccessibilityIdentifier:byFractionOfSizeHorizontal:vertical:");
 
 /*!
  @abstract Scrolls a particular view in the view hierarchy by an amount indicated as a fraction of its size.
@@ -351,5 +373,7 @@ static inline KIFDisplacement KIFDisplacementForSwipingInDirection(KIFSwipeDirec
  @param traits The accessibility traits of the element to wait for. Elements that do not include at least these traits are ignored.
  */
 - (void)waitForFirstResponderWithAccessibilityLabel:(NSString *)label traits:(UIAccessibilityTraits)traits;
+
+- (void)tapStatusBar;
 
 @end

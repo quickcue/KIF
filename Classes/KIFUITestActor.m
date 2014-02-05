@@ -63,25 +63,23 @@
     }];
 }
 
-- (UIView *)waitForViewWithAccessibilityIdentifier:(NSString *)identifier tappable:(BOOL)mustBeTappable
-{
-    UIView *view = nil;
-    [self waitForAccessibilityElement:NULL view:&view withIdentifier:identifier tappable:mustBeTappable];
-    return view;
-}
-
 - (void)waitForAccessibilityElement:(UIAccessibilityElement **)element view:(out UIView **)view withIdentifier:(NSString *)identifier tappable:(BOOL)mustBeTappable
 {
     if (![UIAccessibilityElement instancesRespondToSelector:@selector(accessibilityIdentifier)]) {
         [self failWithError:[NSError KIFErrorWithFormat:@"Running test on platform that does not support accessibilityIdentifier"] stopTest:YES];
     }
     
+    [self waitForAccessibilityElement:element view:view withElementMatchingPredicate:[NSPredicate predicateWithFormat:@"accessibilityIdentifier = %@", identifier] tappable:mustBeTappable];
+}
+
+- (void)waitForAccessibilityElement:(UIAccessibilityElement **)element view:(out UIView **)view withElementMatchingPredicate:(NSPredicate *)predicate tappable:(BOOL)mustBeTappable
+{
     [self runBlock:^KIFTestStepResult(NSError **error) {
         UIAccessibilityElement *foundElement = [[UIApplication sharedApplication] accessibilityElementMatchingBlock:^BOOL(UIAccessibilityElement *element) {
-            return [element.accessibilityIdentifier isEqualToString:identifier];
+            return [predicate evaluateWithObject:element];
         }];
         
-        KIFTestWaitCondition(foundElement, error, @"Could not find view with accessbilityIdentifier \"%@\"", identifier);
+        KIFTestWaitCondition(foundElement, error, @"Could not find view matching: %@", predicate);
         
         UIView *foundView = [UIAccessibilityElement viewContainingAccessibilityElement:foundElement tappable:mustBeTappable error:error];
         if (!foundView) {
@@ -294,7 +292,11 @@
     [self waitForAccessibilityElement:&element view:&view withLabel:label value:nil traits:traits tappable:YES];
     [self tapAccessibilityElement:element inView:view];
     [self enterTextIntoCurrentFirstResponder:text fallbackView:view];
-    
+    [self expectView:view toContainText:expectedResult ?: text];
+}
+
+- (void)expectView:(UIView *)view toContainText:(NSString *)expectedResult
+{
     // We will perform some additional validation if the view is UITextField or UITextView.
     if (![view respondsToSelector:@selector(text)]) {
         return;
@@ -305,7 +307,7 @@
     // Some slower machines take longer for typing to catch up, so wait for a bit before failing
     [self runBlock:^KIFTestStepResult(NSError **error) {
         // We trim \n and \r because they trigger the return key, so they won't show up in the final product on single-line inputs
-        NSString *expected = [expectedResult ?: text stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+        NSString *expected = [expectedResult stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
         NSString *actual = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
         
         KIFTestWaitCondition([actual isEqualToString:expected], error, @"Failed to get text \"%@\" in field; instead, it was \"%@\"", expected, actual);
@@ -313,6 +315,7 @@
         return KIFTestStepResultSuccess;
     } timeout:1.0];
 }
+
 
 
 - (void)clearTextFromViewWithAccessibilityLabel:(NSString *)label
@@ -329,12 +332,25 @@
     
     NSUInteger numberOfCharacters = [view respondsToSelector:@selector(text)] ? [(UITextField *)view text].length : element.accessibilityValue.length;
     
-    NSMutableString *text = [NSMutableString string];
-    for (NSInteger i = 0; i < numberOfCharacters; i ++) {
-        [text appendString:@"\b"];
+    [self tapAccessibilityElement:element inView:view];
+    
+    // Per issue #294, the tap occurs in the center of the text view.  If the text is too long, this means not all text gets cleared.  To address this for most cases, we can check if the selected view conforms to UITextInput and select the whole text range.
+    if ([view conformsToProtocol:@protocol(UITextInput)]) {
+        id <UITextInput> textInput = (id <UITextInput>)view;
+        [textInput setSelectedTextRange:[textInput textRangeFromPosition:textInput.beginningOfDocument toPosition:textInput.endOfDocument]];
+        
+        [self waitForTimeInterval:0.1];
+        [self enterTextIntoCurrentFirstResponder:@"\b" fallbackView:view];
+    } else {
+        
+        NSMutableString *text = [NSMutableString string];
+        for (NSInteger i = 0; i < numberOfCharacters; i ++) {
+            [text appendString:@"\b"];
+        }
+        [self enterTextIntoCurrentFirstResponder:text fallbackView:view];
     }
-
-    [self enterText:text intoViewWithAccessibilityLabel:label traits:UIAccessibilityTraitNone expectedResult:@""];
+    
+    [self expectView:view toContainText:@""];
 }
 
 - (void)clearTextFromAndThenEnterText:(NSString *)text intoViewWithAccessibilityLabel:(NSString *)label
@@ -401,7 +417,7 @@
     UIView *view = nil;
     UIAccessibilityElement *element = nil;
     
-    [self waitForAccessibilityElement:&element view:&view withLabel:label value:nil traits:UIAccessibilityTraitNone tappable:YES];
+    [self waitForAccessibilityElement:&element view:&view withLabel:label value:nil traits:UIAccessibilityTraitButton tappable:YES];
     
     if (![view isKindOfClass:[UISwitch class]]) {
         [self failWithError:[NSError KIFErrorWithFormat:@"View with accessibility label \"%@\" is a %@, not a UISwitch", label, NSStringFromClass([view class])] stopTest:YES];
@@ -520,7 +536,8 @@
 
 - (void)tapRowAtIndexPath:(NSIndexPath *)indexPath inTableViewWithAccessibilityIdentifier:(NSString *)identifier
 {
-    UITableView *tableView = (UITableView *)[self waitForViewWithAccessibilityIdentifier:identifier tappable:NO];
+    UITableView *tableView;
+    [self waitForAccessibilityElement:NULL view:&tableView withIdentifier:identifier tappable:NO];
     [self tapRowAtIndexPath:indexPath inTableView:tableView];
 }
 
@@ -630,7 +647,9 @@
     [self runBlock:^KIFTestStepResult(NSError **error) {
         UIResponder *firstResponder = [[[UIApplication sharedApplication] keyWindow] firstResponder];
         if ([firstResponder isKindOfClass:NSClassFromString(@"UISearchBarTextField")]) {
-            firstResponder = [(UIView *)firstResponder superview];
+            do {
+                firstResponder = [(UIView *)firstResponder superview];
+            } while (firstResponder && ![firstResponder isKindOfClass:[UISearchBar class]]);
         }
         KIFTestWaitCondition([[firstResponder accessibilityLabel] isEqualToString:label], error, @"Expected accessibility label for first responder to be '%@', got '%@'", label, [firstResponder accessibilityLabel]);
         
@@ -651,6 +670,23 @@
         
         return KIFTestStepResultSuccess;
     }];
+}
+
+- (void)tapStatusBar
+{
+    [self runBlock:^KIFTestStepResult(NSError **error) {
+        KIFTestWaitCondition(![UIApplication sharedApplication].statusBarHidden, error, @"Expected status bar to be visible.");
+        return KIFTestStepResultSuccess;
+    }];
+    
+    UIWindow *statusBarWindow = [[UIApplication sharedApplication] statusBarWindow];
+    NSArray *statusBars = [statusBarWindow subviewsWithClassNameOrSuperClassNamePrefix:@"UIStatusBar"];
+    
+    if (statusBars.count == 0) {
+        [self failWithError:[NSError KIFErrorWithFormat: @"Could not find the status bar"] stopTest:YES];
+    }
+    
+    [self tapAccessibilityElement:statusBars[0] inView:statusBars[0]];
 }
 
 @end
