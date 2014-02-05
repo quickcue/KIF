@@ -83,9 +83,7 @@ const NSTimeInterval KEYSTROKE_DELAY = 0.1f;
     if (!characterString.length) {
         return YES;
     }
-    
-    NSLog(@"%@", characterString);
-    
+        
     UIView *keyboardView = [self keyboardView];
     
     // If we didn't find the standard keyboard view, then we may have a custom keyboard
